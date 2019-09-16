@@ -1,0 +1,191 @@
+#include <geometry_msgs/TransformStamped.h>
+#include <ros/ros.h>
+#include <tf/transform_datatypes.h>
+#include <std/lib.h>
+#include <iostream>
+
+#define PI 3.14159265358979323846
+using namespace std;
+
+ros::Subscriber vicon_subscriber;
+ros::Publisher rossumo_subscriber;
+geometry_msgs::TransformStamped msg;
+double p_x = 0;
+double p_x1 = 0;
+double p_y = 0;
+double p_z = 0;
+double q_x = 0;
+double q_y = 0;
+double q_z = 0;
+double q_w = 0;
+uint32_t h_s = 0;
+double roll=0,pitch=0,yaw=0;
+double angle= 0;
+//acquiring and converting quaternion components of roll pitch and yaw
+void do_math(double q_x, double q_y, double q_z, double q_w)
+{
+        tf::Quaternion q(q_x,q_y,q_z,q_w);
+        tf::Matrix3x3 m(q);
+        m.getRPY(roll,pitch,yaw);
+
+        roll = roll*(180/PI);
+        pitch = pitch*(180/PI);
+        yaw = yaw*(180/PI);
+
+}
+//listening to the transform stamped msgs from the vicon system and printing them
+void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
+{
+        v_x = msg->transform.translation.x;
+        v_y = msg->transform.translation.y;
+        v_z = msg->transform.translation.z;
+        q_x = msg->transform.rotation.x;
+        q_y = msg->transform.rotation.y;
+        q_z = msg->transform.rotation.z;
+        q_w = msg->transform.rotation.w;
+        do_math(q_x,q_y,q_z,q_w);
+        ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w);
+}
+
+int main(int argc, char **argv)
+
+{
+        ros::init(argc,argv,"sumo_teleop_alantransform_tf");
+        ros::NodeHandle n;
+        vicon_subscriber = n.subscribe("/vicon/SUMO_11_5_2018/SUMO_11_5_2018",10,subscribecall);
+        rossumo_publisher = n.advertise<geometry_msgs::Twist>("/rossumo1/cmd_vel_norm", 10);
+        ROS_INFO("Init");
+        ros::Rate rate(10);
+
+//move forward
+
+double d = 0;
+while(n.ok()&& d < 0.5)
+{
+d = v_x - v_x1;
+v.linear.x = 0.5;
+v.angular.z = 0;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+//rotate right
+/*
+int q_z1 = q_z + PI/2;
+
+while(n.ok() && q_z < q_z1)
+{
+v.linear.x=0;
+v.angular.z =0.3;
+rossumo_publisher.publish(v);
+ROS_INFO("rotate right1");
+ros::spinOnce();
+rate.sleep();
+}
+//move forward
+
+double v_y1 = v_y +0.5;
+while(n.ok() && v_y < v_y1)
+{
+v.linear.x= 0.7;
+v.angular.z =0;
+velocity_publisher.publish(v);
+ROS_INFO("%lf",d.toSec());
+ROS_INFO("move forward2");
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+
+//move right
+start = ros::Time::now();
+d = ros::Duration(0);
+while(n.ok() && d.toSec() <=2)
+{
+v.linear.x=0;
+v.angular.z =0.34;
+velocity_publisher.publish(v);
+ROS_INFO("%lf",d.toSec());
+ROS_INFO("rotate right2");
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+
+//move forward
+start = ros::Time::now();
+d = ros::Duration(0);
+while(n.ok() && d.toSec() <=2)
+{
+v.linear.x= 0.7;
+v.angular.z =0;
+velocity_publisher.publish(v);
+ROS_INFO("%lf",d.toSec());
+ROS_INFO("move forward3");
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+
+//rotate right
+start = ros::Time::now();
+d = ros::Duration(0);
+while(n.ok() && d.toSec() <=2)
+{
+v.linear.x=0;
+v.angular.z =0.34;
+velocity_publisher.publish(v);
+ROS_INFO("%lf",d.toSec());
+ROS_INFO("rotate right3");
+
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+
+//move forward
+start = ros::Time::now();
+d = ros::Duration(0);
+while(n.ok() && d.toSec() <=2)
+{
+v.linear.x= 0.7;
+v.angular.z =0;
+velocity_publisher.publish(v);
+ROS_INFO("%lf", d.toSec());
+ROS_INFO("move forward4");
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+
+//rotate right
+start = ros::Time::now();
+d = ros::Duration(0);
+while(n.ok() && d.toSec() <=2)
+{
+v.linear.x=0;
+v.angular.z =0.34;
+velocity_publisher.publish(v);
+ROS_INFO("%lf", d.toSec());
+ROS_INFO("rotate right4");
+
+ros::spinOnce();
+rate.sleep();
+ros::Time current = ros::Time::now();
+d = current - start;
+}
+*/
+v.linear.x =0;
+v.angular.z=0;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+return 0;
+}
+
+
+
