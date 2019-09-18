@@ -43,6 +43,28 @@ void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
         do_math(q_x,q_y,q_z,q_w);
         ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w, roll, pitch, yaw);
 }
+//calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
+
+double q1[10][10];
+double q0[4][1];
+double initial(q1[10][10])
+{
+        double r1=4,c1=4,r2=4,c2=1,i,j,k;
+        double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}};
+        double q0[4][1]={ q_x, q_y, q_z, q_w};
+                for(i=0; i<r1; ++i)
+                for(j=0; j<c2; ++j)
+                {
+                q1[i][j] = 0;
+                };
+
+                for(i=0; i<r1; ++i)
+                for(j=0; j<c2; ++j)
+                for(k=0; k<c1; ++k)
+                {
+                q1[i][j]+=r0[i][k]*q0[k][j];
+                };
+} 
 
 int main(int argc, char **argv)
 {
@@ -54,26 +76,8 @@ int main(int argc, char **argv)
         ros::Rate rate(10);
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
-double q1[10][10];
-double q0[4][1];
-double initial(q1[10][10])
-{
-	double r1=4,c1=4,r2=4,c2=1,i,j,k;
-	double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}};
-	double q0[4][1]={ q_x, q_y, q_z, q_w};
-		for(i=0; i<r1; ++i)
-		for(j=0; j<c2; ++j)
-		{
-		q1[i][j] = 0;
-		};
+/*
 
-		for(i=0; i<r1; ++i)
-		for(j=0; j<c2; ++j)
-		for(k=0; k<c1; ++k)
-		{
-		q1[i][j]+=r0[i][k]*q0[k][j];
-		};
-}
 //Inititalize rossumo to that angle q1
 double d = 1;
 while(n.ok()&& d !=0)
@@ -359,13 +363,11 @@ rossumo_publisher.publish(v);
 ros::spinOnce();
 rate.sleep();
 }
-
+*/
 v.linear.x = 0;
 v.angular.z = 0;
 rossumo_publisher.publish(v);
 ros::spinOnce();
 return 0;
 }
-
-
 
