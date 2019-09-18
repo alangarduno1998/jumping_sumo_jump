@@ -44,6 +44,7 @@ void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
         ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w, roll, pitch, yaw);
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
 double q1[10][10];
@@ -77,10 +78,13 @@ int main(int argc, char **argv)
         ros::Rate rate(10);
 =======
 >>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
+=======
+>>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
 /*
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 //Inititalize rossumo to that angle q1
 double d = 1;
@@ -93,12 +97,17 @@ rossumo_publisher.publish(v);
 ros::spinOnce();
 rate.sleep();
 =======
+=======
+>>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
 		for(i=0; i<r1; ++i)
 		for(j=0; j<c2; ++j)
 		for(k=0; k<c1; ++k)
 		{
 		q1[i][j]+=r0[i][k]*q0[k][j];
 		};
+<<<<<<< HEAD
+>>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
+=======
 >>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
 }
 
@@ -289,6 +298,31 @@ int main(int argc, char **argv)
         ROS_INFO("Init");
         ros::Rate rate(10);
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
+<<<<<<< HEAD
+
+//Inititalize rossumo to that angle q1
+double d = 1;
+while(n.ok()&& d !=0)
+{
+d = q1[3][1]-q0[3][1];
+v.linear.x = 0;
+v.angular.z = 0.35;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+//Initialize rossumo to position p1
+while(n.ok()&& d !=0)
+{
+d = p1[1][1]-v_x;
+
+v.linear.x = 0.3;
+v.angular.z = 0;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+=======
 
 //Inititalize rossumo to that angle q1
 double d = 1;
@@ -313,6 +347,74 @@ ros::spinOnce();
 rate.sleep();
 }
 
+//Inititalize rossumo to that angle q1
+while(n.ok()&& d !=0)
+{
+d = q2[3][1]-q_z;
+v.linear.x = 0;
+v.angular.z = 0.35;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+//move jumping sumo forward to p2
+
+while(n.ok()&& d !=0)
+{
+d= p2[2][1]-v_y;
+v.linear.x= 0.3;
+v.angular.z =0;
+rossumo_publisher.publish(v);
+ROS_INFO("move forward2");
+ros::spinOnce();
+rate.sleep();
+}
+//Inititalize rossumo to that angle q3
+while(n.ok()&& d !=0)
+{
+d = q3[3][1]-q_z;
+v.linear.x = 0;
+v.angular.z = 0.35;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+
+while(n.ok()&& d !=0)
+{
+d= p3[1][1]-v_x;
+v.linear.x= 0.3;
+v.angular.z =0;
+rossumo_publisher.publish(v);
+ROS_INFO("move forward3");
+ros::spinOnce();
+rate.sleep();
+}
+
+//Inititalize rossumo to that angle q4
+while(n.ok()&& d !=0)
+{
+d = q3[3][1]-q_z;
+v.linear.x = 0;
+v.angular.z = 0.35;
+rossumo_publisher.publish(v);
+ros::spinOnce();
+rate.sleep();
+}
+
+//move jumping sumo forward to p4
+>>>>>>> de3a5e85ec8618453ffc7f3876689d9e1cac8b99
+
+while(n.ok()&& d !=0)
+{
+d= p4[2][1]-v_y;
+v.linear.x = 0.3;
+v.angular.z = 0;
+rossumo_publisher.publish(v);
+ROS_INFO("move forward2");
+ros::spinOnce();
+rate.sleep();
+}
 //Inititalize rossumo to that angle q1
 while(n.ok()&& d !=0)
 {
