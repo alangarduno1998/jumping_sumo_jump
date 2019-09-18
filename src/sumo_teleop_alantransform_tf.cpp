@@ -44,15 +44,6 @@ void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
         ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w, roll, pitch, yaw);
 }
 
-int main(int argc, char **argv)
-{
-        ros::init(argc,argv,"sumo_teleop_alantransform_tf");
-        ros::NodeHandle n;
-        vicon_subscriber = n.subscribe("/vicon/SUMO_11_5_2018/SUMO_11_5_2018",10,subscribecall);
-        rossumo_publisher = n.advertise<geometry_msgs::Twist>("/rossumo1/cmd_vel_norm", 10);
-        ROS_INFO("Init");
-        ros::Rate rate(10);
-
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
 double q1[10][10];
@@ -261,12 +252,14 @@ double final(q5[10][10])
                 }
 }
 
-
-
-
-
-
-
+int main(int argc, char **argv)
+{
+        ros::init(argc,argv,"sumo_teleop_alantransform_tf");
+        ros::NodeHandle n;
+        vicon_subscriber = n.subscribe("/vicon/SUMO_11_5_2018/SUMO_11_5_2018",10,subscribecall);
+        rossumo_publisher = n.advertise<geometry_msgs::Twist>("/rossumo1/cmd_vel_norm", 10);
+        ROS_INFO("Init");
+        ros::Rate rate(10);
 
 
 //Inititalize rossumo to that angle q1
