@@ -19,9 +19,16 @@ double q_y = 0;
 double q_z = 0;
 double q_w = 0;
 double roll=0,pitch=0,yaw=0;
-double r1=4,c1=4,r2=4,c2=1,i,j,k;
-double p1[4][1],p0[4][1],t0[4][4],q1[4][1],q0[4][1],r0[4][4];
-
+int r1=4,c1=4,r2=4,c2=1,i,j,k;
+double p1,p0,t0,q1,q0,r0;
+double *ptr[4][1];
+double **value()
+{
+	for(int i=0; i<4;i++)
+	{
+	p1[i][0];
+	}
+};
 //acquiring and converting quaternion components of roll pitch and yaw
 void do_math(double q_x, double q_y, double q_z, double q_w)
 {
@@ -48,7 +55,7 @@ void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
 }
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
-double rotation(double q1[4][1], double q0[4][1], double r0[4][4])
+double[] rotation(double q1[4][1], double q0[4][1], double r0[4][4],*ptr[4][1])
 {
                 for(i=0; i<r1; ++i)
                 for(j=0; j<c2; ++j)
@@ -60,16 +67,19 @@ double rotation(double q1[4][1], double q0[4][1], double r0[4][4])
                 for(j=0; j<c2; ++j)
                 for(k=0; k<c1; ++k)
                 {
-                q1[i][j]+=r0[i][k]*q0[k][j];
+                ptr[i][j]+=r0[i][k]*q0[k][j];
                 };
+
+
+return (*ptr[4][1]);
 }
 
 
 //calculate translated position of jumping sumo moving forward to p1
 
-double translation(double p1[4][1], double p0[4][1], double t0[4][4])
+double[] translation(double p1[4][1], double p0[4][1], double t0[4][4], double *ptr[4][1])
 {
-                for(i=0; i<r1: ++i)
+                for(i=0; i<r1; ++i)
                 for(j=0; j<c2; ++j)
                 {
                 p1[i][j] = 0;
@@ -79,8 +89,9 @@ double translation(double p1[4][1], double p0[4][1], double t0[4][4])
                 for(j=0; j<c2; ++j)
                 for(k=0; k<c1; ++k)
                 {
-                p1[i][j]+=t0[i][k]*p0[k][j];
+                ptr[i][j]+=t0[i][k]*p0[k][j];
                 }
+return (*ptr[4][1]);
 }
 
 
@@ -99,8 +110,11 @@ int main(int argc, char **argv)
 double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}};
 double q0[4][1]={ q_x, q_y, q_z, q_w};
 double q1[4][1];
-rotation(double q0, double q1, double r0);
+**value[4][1](q1[4][1]);
+double *ptr[4][1] = &q1[4][1];
+rotation(double q0[4][1], double q1[4][1], double r0[4][1]);
 double d = 1;
+
 while(n.ok()&& d !=0)
 {
 d = q1[3][1]-q_z;
@@ -115,7 +129,8 @@ rate.sleep();
 double t0[4][4] = { {1, 0, 0, 0.5}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
 double p0[4][1] = {v_x, v_y, v_z, 1};
 double p1[4][1];
-translation(double p0, double p1, double t0);
+
+translation(double p0[4][1], double p1[4][1], double t0[4][4]);
 
 while(n.ok()&& d !=0)
 {
@@ -168,7 +183,7 @@ double q0[4][1]={ q_x, q_y, q_z, q_w};
 double q1[4][1];
 while(n.ok()&& d !=0)
 {
-d = q3[3][1]-q_z;
+d = q1[3][1]-q_z;
 v.linear.x = 0;
 v.angular.z = 0.35;
 rossumo_publisher.publish(v);
