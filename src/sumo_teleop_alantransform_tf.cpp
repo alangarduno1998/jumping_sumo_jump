@@ -27,7 +27,7 @@ geometry_msgs::Twist v;
 double v_x = 0;
 
 double v_y = 0;
-
+0
 double v_z = 0;
 
 double q_x = 0;
@@ -151,10 +151,10 @@ int main(int argc, char **argv)
 
 
 Eigen::MatrixXd r0_eig;
-r0_eig.row(0) ={1,0,0,0};
-r0_eig.row(1) = {0,1,0,0};
-r0_eig.row(2) = {0,0,0,0};
-r0_eig.row(3) = {0,0,0,1};
+r0_eig.row(0) <<1,0,0,0;
+r0_eig.row(1) <<0,1,0,0;
+r0_eig.row(2) <<0,0,0,0;
+r0_eig.row(3) <<0,0,0,1;
 Eigen::AffineXd q1_eig;
 q1_eig= q0_eig*r0_eig;
 
@@ -183,10 +183,10 @@ rate.sleep();
 
 //initialize rossumo forward in the x-axis direction
 Eigen::MatrixXd t0_eig;
-t0_eig.row(0) ={1,0,0,0.5};
-t0_eig.row(1) = {0,1,0,0};
-t0_eig.row(2) = {0,0,1,0};
-t0_eig.row(3) = {0,0,0,1};
+t0_eig.row(0) <<1,0,0,0.5;
+t0_eig.row(1) <<0,1,0,0;
+t0_eig.row(2) <<0,0,1,0;
+t0_eig.row(3) <<0,0,0,1;
 Eigen::AffineXd p1_eig;
 p1_eig= p0_eig*t0_eig;
 
@@ -216,12 +216,10 @@ rate.sleep();
 
 //Inititalize rossumo to the y-axis of the vicon system
 
-Eigen::MatrixXd r0_eig;
-r0_eig.row(0) ={1,0,0,0};
-r0_eig.row(1) = {0,1,0,0};
-r0_eig.row(2) = {0,0,1,PI/2};
-r0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd q1_eig;
+r0_eig.row(0) <<1,0,0,0;
+r0_eig.row(1) <<0,1,0,0;
+r0_eig.row(2) <<0,0,1,PI/2;
+r0_eig.row(3) <<0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 
 
@@ -251,12 +249,10 @@ rate.sleep();
 
 //initialize rossumo forward in the y-axis direction
 
-Eigen::MatrixXd t0_eig;
-t0_eig.row(0) ={1,0,0,0};
-t0_eig.row(1) = {0,1,0,0.5};
-t0_eig.row(2) = {0,0,1,0};
-t0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd p1_eig;
+t0_eig.row(0) <<1,0,0,0;
+t0_eig.row(1) <<0,1,0,0.5;
+t0_eig.row(2) <<0,0,1,0;
+t0_eig.row(3) <<0,0,0,1;
 p1_eig= p0_eig*t0_eig;
 
 
@@ -288,12 +284,10 @@ rate.sleep();
 
 //Inititalize rossumo to the negative x-axis of the vicon system
 
-Eigen::MatrixXd r0_eig;
-r0_eig.row(0) ={1,0,0,0};
-r0_eig.row(1) = {0,1,0,0};
-r0_eig.row(2) = {0,0,1,PI/2};
-r0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd q1_eig;
+r0_eig.row(0) <<1,0,0,0;
+r0_eig.row(1) <<0,1,0,0;
+r0_eig.row(2) <<0,0,1,PI/2;
+r0_eig.row(3) <<0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 
 
@@ -323,17 +317,12 @@ rate.sleep();
 
 //initialize rossumo backward in the x-axis direction
 
-Eigen::MatrixXd t0_eig;
-t0_eig.row(0) ={1,0,0,-0.5};
-t0_eig.row(1) = {0,1,0,0};
-t0_eig.row(2) = {0,0,1,0};
-t0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd p1_eig;
+t0_eig.row(0) <<1,0,0,-0.5;
+t0_eig.row(1) <<0,1,0,0;
+t0_eig.row(2) <<0,0,1,0;
+t0_eig.row(3) <<0,0,0,1;
 p1_eig= p0_eig*t0_eig;
 Eigen::AffineXd::Ones(4,1) d;
-
-translation(double p0, double p1, double t0);
-
 
 
 while(n.ok()&& d !=0)
@@ -360,12 +349,10 @@ rate.sleep();
 
 //Inititalize rossumo to the negative y-axis of the vicon system
 
-Eigen::MatrixXd r0_eig;
-r0_eig.row(0) ={1,0,0,0};
-r0_eig.row(1) = {0,1,0,0};
-r0_eig.row(2) = {0,0,1,PI/2};
-r0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd q1_eig;
+r0_eig.row(0) <<1,0,0,0;
+r0_eig.row(1) <<0,1,0,0;
+r0_eig.row(2) <<0,0,1,PI/2;
+r0_eig.row(3) <<0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 
 
@@ -397,17 +384,12 @@ rate.sleep();
 
 //initialize rossumo backward in the y-axis direction
 
-Eigen::MatrixXd t0_eig;
-t0_eig.row(0) ={1,0,0,-0.5};
-t0_eig.row(1) = {0,1,0,0};
-t0_eig.row(2) = {0,0,1,0};
-t0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd p1_eig;
+t0_eig.row(0) <<1,0,0,-0.5;
+t0_eig.row(1) <<0,1,0,0;
+t0_eig.row(2) <<0,0,1,0;
+t0_eig.row(3) <<0,0,0,1;
 p1_eig= p0_eig*t0_eig;
 Eigen::AffineXd::Ones(4,1) d;
-
-translation(double p0, double p1, double t0);
-
 
 
 while(n.ok()&& d !=0)
@@ -434,12 +416,10 @@ rate.sleep();
 
 //Inititalize rossumo to the x-axis of the vicon system
 
-Eigen::MatrixXd r0_eig;
-r0_eig.row(0) ={1,0,0,0};
-r0_eig.row(1) = {0,1,0,0};
-r0_eig.row(2) = {0,0,1,PI/2};
-r0_eig.row(3) = {0,0,0,1};
-Eigen::AffineXd q1_eig;
+r0_eig.row(0) <<1,0,0,0;
+r0_eig.row(1) <<0,1,0,0;
+r0_eig.row(2) <<0,0,1,PI/2;
+r0_eig.row(3) <<0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 Eigen::AffineXd::Ones(4,1) d;
 
