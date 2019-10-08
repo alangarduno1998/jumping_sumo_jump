@@ -4,261 +4,475 @@
 #include <stdlib.h>
 #include <iostream>
 #include <geometry_msgs/Twist.h>
+#include <eigen3/Eigen/Eigen>
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Eigenvalues>
+#include <eigen3/Eigen/Geometry>
 #define PI 3.14159265358979323846
 using namespace std;
 
+
+
 ros::Subscriber vicon_subscriber;
+
 ros::Publisher rossumo_publisher;
+
 geometry_msgs::TransformStamped msg;
+
+geometry_msgs::TransformStamped eig;
+
 geometry_msgs::Twist v;
+
+
 double v_x = 0;
+
 double v_y = 0;
+
 double v_z = 0;
+
 double q_x = 0;
+
 double q_y = 0;
+
 double q_z = 0;
+
 double q_w = 0;
+
 double roll=0,pitch=0,yaw=0;
+
 int r1=4,c1=4,r2=4,c2=1,i,j,k;
-double p1,p0,t0,q1,q0,r0;
-double *ptr[4][1];
-double **value()
-{
-	for(int i=0; i<4;i++)
-	{
-	p1[i][0];
-	}
-};
+
+Eigen::AffineXd q1_eig;
+Eigen::AffineXd q0_eig;
+Eigen::MatrixXd r0_eig;
+Eigen::AffineXd p1_eig;
+Eigen::AffineXd p0_eig;
+Eigen::MatrixXd t0_eig;
+Eigen::AffineXd d;
+
+
+
 //acquiring and converting quaternion components of roll pitch and yaw
-void do_math(double q_x, double q_y, double q_z, double q_w)
+Eigen::AffineXd transformTFToEigen(const geometry_msgs::TransformStamped::ConstPtr& msg)
 {
+Eigen::AffineXd q0_eig;
+Eigen::AffineXd p0_eig;
+	for (int i=0;i<1;i++)
+		{
+		q0_eig.matrix()(i,1)=msg->transform.getBasis()[i];
+		p0_eig.matrix()(i,1)=msg->transform.getOrigin()[i];
+	for(int j=0;j<3;j++)
+				{
+				q0_eig.matrix()(i,j)=msg->transform.getBasis()[i][j];
+		                p0_eig.matrix()(i,j)=msg->transform.getOrigin()[i][j];
+
+				}
+		}
+return p0_eig;
+return q0_eig;
+}
+
+void do_math(double q_x, double q_y, double q_z, double q_w)
+
+{
+
         tf::Quaternion q(q_x,q_y,q_z,q_w);
+
         tf::Matrix3x3 m(q);
+
         m.getRPY(roll,pitch,yaw);
 
+
+
         roll = roll*(180/PI);
+
         pitch = pitch*(180/PI);
+
         yaw = yaw*(180/PI);
+
 }
+
 //listening to the transform stamped msgs from the vicon system and printing them
+
 void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
+
 {
+
         v_x = msg->transform.translation.x;
+
         v_y = msg->transform.translation.y;
+
         v_z = msg->transform.translation.z;
+
         q_x = msg->transform.rotation.x;
+
         q_y = msg->transform.rotation.y;
+
         q_z = msg->transform.rotation.z;
+
         q_w = msg->transform.rotation.w;
+
         do_math(q_x,q_y,q_z,q_w);
+
         ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w, roll, pitch, yaw);
+
 }
+
 //calculate angular orientation to match rossumo orientation to the x-axis of the vicon system
 
-double[] rotation(double q1[4][1], double q0[4][1], double r0[4][4],*ptr[4][1])
-{
-                for(i=0; i<r1; ++i)
-                for(j=0; j<c2; ++j)
-                {
-                q1[i][j] = 0;
-                };
-
-                for(i=0; i<r1; ++i)
-                for(j=0; j<c2; ++j)
-                for(k=0; k<c1; ++k)
-                {
-                ptr[i][j]+=r0[i][k]*q0[k][j];
-                };
 
 
-return (*ptr[4][1]);
-}
 
 
 //calculate translated position of jumping sumo moving forward to p1
 
-double[] translation(double p1[4][1], double p0[4][1], double t0[4][4], double *ptr[4][1])
-{
-                for(i=0; i<r1; ++i)
-                for(j=0; j<c2; ++j)
-                {
-                p1[i][j] = 0;
-                }
-
-                for(i=0; i<r1; ++i)
-                for(j=0; j<c2; ++j)
-                for(k=0; k<c1; ++k)
-                {
-                ptr[i][j]+=t0[i][k]*p0[k][j];
-                }
-return (*ptr[4][1]);
-}
-
-
 int main(int argc, char **argv)
+
 {
+
         ros::init(argc,argv,"sumo_teleop_alantransform_tf");
+
         ros::NodeHandle n;
+
         vicon_subscriber = n.subscribe("/vicon/SUMO_11_5_2018/SUMO_11_5_2018",10,subscribecall);
+
         rossumo_publisher = n.advertise<geometry_msgs::Twist>("/rossumo1/cmd_vel_norm", 10);
+
         ROS_INFO("Init");
+
         ros::Rate rate(10);
+
+
+
 
 
 //Inititalize rossumo to to match rossumo orientation to the x-axis of the vicon system
 
-double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 1}};
-double q0[4][1]={ q_x, q_y, q_z, q_w};
-double q1[4][1];
-**value[4][1](q1[4][1]);
-double *ptr[4][1] = &q1[4][1];
-rotation(double q0[4][1], double q1[4][1], double r0[4][1]);
-double d = 1;
+
+
+Eigen::MatrixXd r0_eig;
+r0_eig.row(0) ={1,0,0,0};
+r0_eig.row(1) = {0,1,0,0};
+r0_eig.row(2) = {0,0,0,0};
+r0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd q1_eig;
+q1_eig= q0_eig*r0_eig;
+
+
+Eigen::AffineXd::Ones(4,1) d;
 
 while(n.ok()&& d !=0)
+
 {
-d = q1[3][1]-q_z;
+
+d = q1_eig-q0_eig;
+
 v.linear.x = 0;
+
 v.angular.z = 0.35;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
 
 //initialize rossumo forward in the x-axis direction
-double t0[4][4] = { {1, 0, 0, 0.5}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-double p0[4][1] = {v_x, v_y, v_z, 1};
-double p1[4][1];
+Eigen::MatrixXd t0_eig;
+t0_eig.row(0) ={1,0,0,0.5};
+t0_eig.row(1) = {0,1,0,0};
+t0_eig.row(2) = {0,0,1,0};
+t0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd p1_eig;
+p1_eig= p0_eig*t0_eig;
 
-translation(double p0[4][1], double p1[4][1], double t0[4][4]);
+
+Eigen::AffineXd::Ones(4,1) d;
+
 
 while(n.ok()&& d !=0)
+
 {
-d = p1[1][1]-v_x;
+
+d = p1_eig-p0_eig;
+
+
 
 v.linear.x = 0.3;
+
 v.angular.z = 0;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
 //Inititalize rossumo to the y-axis of the vicon system
 
-double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, PI/2}, {0, 0, 0, 1}};
-double q0[4][1]={ q_x, q_y, q_z, q_w};
-double q1[4][1];
+Eigen::MatrixXd r0_eig;
+r0_eig.row(0) ={1,0,0,0};
+r0_eig.row(1) = {0,1,0,0};
+r0_eig.row(2) = {0,0,1,PI/2};
+r0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd q1_eig;
+q1_eig= q0_eig*r0_eig;
+
+
+
+Eigen::AffineXd::Ones(4,1) d;
+
 
 while(n.ok()&& d !=0)
+
 {
-d = q1[3][1]-q_z;
+
+d = q1_eig-q0_eig;
+
 v.linear.x = 0;
+
 v.angular.z = 0.35;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
 
 //initialize rossumo forward in the y-axis direction
-double t0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0.5}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-double p0[4][1] = {v_x, v_y, v_z, 1};
-double p1[4][1];
-translation(double p0, double p1, double t0);
+
+Eigen::MatrixXd t0_eig;
+t0_eig.row(0) ={1,0,0,0};
+t0_eig.row(1) = {0,1,0,0.5};
+t0_eig.row(2) = {0,0,1,0};
+t0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd p1_eig;
+p1_eig= p0_eig*t0_eig;
+
+
+Eigen::AffineXd::Ones(4,1) d;
 
 while(n.ok()&& d !=0)
+
 {
-d= p1[2][1]-v_y;
+
+d= p1_eig-p0_eig;
+
 v.linear.x= 0.3;
+
 v.angular.z =0;
+
 rossumo_publisher.publish(v);
+
 ROS_INFO("move forward2");
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
+
 
 
 //Inititalize rossumo to the negative x-axis of the vicon system
 
-double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, PI/2}, {0, 0, 0, 1}};
-double q0[4][1]={ q_x, q_y, q_z, q_w};
-double q1[4][1];
+Eigen::MatrixXd r0_eig;
+r0_eig.row(0) ={1,0,0,0};
+r0_eig.row(1) = {0,1,0,0};
+r0_eig.row(2) = {0,0,1,PI/2};
+r0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd q1_eig;
+q1_eig= q0_eig*r0_eig;
+
+
+
+Eigen::AffineXd::Ones(4,1) d;
+
+
 while(n.ok()&& d !=0)
+
 {
-d = q1[3][1]-q_z;
+
+d = q1_eig-q0_eig;
+
 v.linear.x = 0;
+
 v.angular.z = 0.35;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
 
 //initialize rossumo backward in the x-axis direction
-double t0[4][4] = { {1, 0, 0, -0.5}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-double p0[4][1] = {v_x, v_y, v_z, 1};
-double p1[4][1];
+
+Eigen::MatrixXd t0_eig;
+t0_eig.row(0) ={1,0,0,-0.5};
+t0_eig.row(1) = {0,1,0,0};
+t0_eig.row(2) = {0,0,1,0};
+t0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd p1_eig;
+p1_eig= p0_eig*t0_eig;
+Eigen::AffineXd::Ones(4,1) d;
+
 translation(double p0, double p1, double t0);
 
+
+
 while(n.ok()&& d !=0)
+
 {
-d= p1[1][1]-v_x;
+
+d= p1_eig-p0_eig;
+
 v.linear.x= 0.3;
+
 v.angular.z =0;
+
 rossumo_publisher.publish(v);
+
 ROS_INFO("move forward3");
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
 
 //Inititalize rossumo to the negative y-axis of the vicon system
 
-double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, PI/2}, {0, 0, 0, 1}};
-double q0[4][1]={ q_x, q_y, q_z, q_w};
-double q1[4][1];
+Eigen::MatrixXd r0_eig;
+r0_eig.row(0) ={1,0,0,0};
+r0_eig.row(1) = {0,1,0,0};
+r0_eig.row(2) = {0,0,1,PI/2};
+r0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd q1_eig;
+q1_eig= q0_eig*r0_eig;
+
+
+
+Eigen::AffineXd::Ones(4,1) d;
+
+
 while(n.ok()&& d !=0)
+
 {
-d = q1[3][1]-q_z;
+
+d = q1_eig-q0_eig;
+
 v.linear.x = 0;
+
 v.angular.z = 0.35;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
+
 
 
 //initialize rossumo backward in the y-axis direction
-double t0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, -0.5}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-double p0[4][1] = {v_x, v_y, v_z, 1};
-double p1[4][1];
+
+Eigen::MatrixXd t0_eig;
+t0_eig.row(0) ={1,0,0,-0.5};
+t0_eig.row(1) = {0,1,0,0};
+t0_eig.row(2) = {0,0,1,0};
+t0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd p1_eig;
+p1_eig= p0_eig*t0_eig;
+Eigen::AffineXd::Ones(4,1) d;
+
 translation(double p0, double p1, double t0);
 
+
+
 while(n.ok()&& d !=0)
+
 {
-d= p1[2][1]-v_y;
+
+d= p1_eig-p0_eig;
+
 v.linear.x = 0.3;
+
 v.angular.z = 0;
+
 rossumo_publisher.publish(v);
+
 ROS_INFO("move forward2");
+
 ros::spinOnce();
+
 rate.sleep();
+
 }
+
+
 
 //Inititalize rossumo to the x-axis of the vicon system
 
-double r0[4][4] = { {1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, PI/2}, {0, 0, 0, 1}};
-double q0[4][1]={ q_x, q_y, q_z, q_w};
-double q1[4][1];
+Eigen::MatrixXd r0_eig;
+r0_eig.row(0) ={1,0,0,0};
+r0_eig.row(1) = {0,1,0,0};
+r0_eig.row(2) = {0,0,1,PI/2};
+r0_eig.row(3) = {0,0,0,1};
+Eigen::AffineXd q1_eig;
+q1_eig= q0_eig*r0_eig;
+Eigen::AffineXd::Ones(4,1) d;
+
+
 while(n.ok()&& d !=0)
+
 {
-d = q1[3][1]-q_w;
-v.linear.x = 0;
-v.angular.z = 0.35;
-rossumo_publisher.publish(v);
-ros::spinOnce();
-rate.sleep();
-}
+
+d = q1_eig-q0_eig
 
 v.linear.x = 0;
-v.angular.z = 0;
+
+v.angular.z = 0.35;
+
 rossumo_publisher.publish(v);
+
 ros::spinOnce();
-return 0;
+
+rate.sleep();
+
 }
+
+
+
+v.linear.x = 0;
+
+v.angular.z = 0;
+
+rossumo_publisher.publish(v);
+
+ros::spinOnce();
+
+return 0;
+
+}
+
