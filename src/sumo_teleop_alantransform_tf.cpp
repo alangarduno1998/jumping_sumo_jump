@@ -5,8 +5,7 @@
 #include <iostream>
 #include <geometry_msgs/Twist.h>
 #include <eigen3/Eigen/Eigen>
-#include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Eigenvalues>
+#include <eigen3/Eigen/Core>
 #include <eigen3/Eigen/Geometry>
 #define PI 3.14159265358979323846
 using namespace std;
@@ -18,16 +17,13 @@ ros::Subscriber vicon_subscriber;
 ros::Publisher rossumo_publisher;
 
 geometry_msgs::TransformStamped msg;
-
-geometry_msgs::TransformStamped eig;
-
 geometry_msgs::Twist v;
 
 
 double v_x = 0;
 
 double v_y = 0;
-0
+
 double v_z = 0;
 
 double q_x = 0;
@@ -40,36 +36,46 @@ double q_w = 0;
 
 double roll=0,pitch=0,yaw=0;
 
-int r1=4,c1=4,r2=4,c2=1,i,j,k;
+int i,j,k;
 
-Eigen::AffineXd q1_eig;
-Eigen::AffineXd q0_eig;
-Eigen::MatrixXd r0_eig;
-Eigen::AffineXd p1_eig;
-Eigen::AffineXd p0_eig;
-Eigen::MatrixXd t0_eig;
-Eigen::AffineXd d;
+Eigen::Affine3d q1_eig;
+Eigen::Affine3d q0_eig;
+Eigen::Matrix3d r0_eig;
+Eigen::Affine3d p1_eig;
+Eigen::Affine3d p0_eig;
+Eigen::Matrix3d t0_eig;
+Eigen::Affine3d d;
 
 
 
 //acquiring and converting quaternion components of roll pitch and yaw
-Eigen::AffineXd transformTFToEigen(const geometry_msgs::TransformStamped::ConstPtr& msg)
+Eigen::Affine3d transformTFToEigen(const geometry_msgs::TransformStamped::ConstPtr& msg)
 {
-Eigen::AffineXd q0_eig;
-Eigen::AffineXd p0_eig;
+Eigen::Affine3d q0_eig;
 	for (int i=0;i<1;i++)
 		{
 		q0_eig.matrix()(i,1)=msg->transform.getBasis()[i];
-		p0_eig.matrix()(i,1)=msg->transform.getOrigin()[i];
 	for(int j=0;j<3;j++)
 				{
 				q0_eig.matrix()(i,j)=msg->transform.getBasis()[i][j];
-		                p0_eig.matrix()(i,j)=msg->transform.getOrigin()[i][j];
-
 				}
 		}
+		q0_eig.matrix()(3,0)=1;
+		return q0_eig;
+}
+Eigen::Affine3d transformTFToEigen(const geometry_msgs::TransformStamped::ConstPtr& msg)
+{
+Eigen::Affine3d p0_eig;
+        for (int i=0;i<1;i++)
+                {
+                p0_eig.matrix()(i,1)=msg->transform.getOrigin()[i];
+        for(int j=0;j<3;j++)
+                                {
+                                p0_eig.matrix()(i,j)=msg->transform.getOrigin()[i][j];
+                                }
+
+                }
 return p0_eig;
-return q0_eig;
 }
 
 void do_math(double q_x, double q_y, double q_z, double q_w)
@@ -150,16 +156,18 @@ int main(int argc, char **argv)
 
 
 
-Eigen::MatrixXd r0_eig;
-r0_eig.row(0) <<1,0,0,0;
-r0_eig.row(1) <<0,1,0,0;
-r0_eig.row(2) <<0,0,0,0;
-r0_eig.row(3) <<0,0,0,1;
-Eigen::AffineXd q1_eig;
+Eigen::Matrix3f r0_eig;
+r0_eig << 1,0,0,0
+          0,1,0,0
+          0,0,0,0
+          0,0,0,1;
+std::cout << r0_eig;
+
+Eigen::Affine3d q1_eig;
 q1_eig= q0_eig*r0_eig;
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 while(n.ok()&& d !=0)
 
@@ -182,16 +190,16 @@ rate.sleep();
 
 
 //initialize rossumo forward in the x-axis direction
-Eigen::MatrixXd t0_eig;
-t0_eig.row(0) <<1,0,0,0.5;
-t0_eig.row(1) <<0,1,0,0;
-t0_eig.row(2) <<0,0,1,0;
-t0_eig.row(3) <<0,0,0,1;
-Eigen::AffineXd p1_eig;
+Eigen::Matrix3d t0_eig;
+t0_eig << 1,0,0,0.5
+          0,1,0,0
+          0,0,1,0
+          0,0,0,1;
+Eigen::AffineNd p1_eig;
 p1_eig= p0_eig*t0_eig;
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -216,15 +224,16 @@ rate.sleep();
 
 //Inititalize rossumo to the y-axis of the vicon system
 
-r0_eig.row(0) <<1,0,0,0;
-r0_eig.row(1) <<0,1,0,0;
-r0_eig.row(2) <<0,0,1,PI/2;
-r0_eig.row(3) <<0,0,0,1;
+r0_eig << 1,0,0,0
+          0,1,0,0
+          0,0,1,PI/2
+          0,0,0,1;
+
 q1_eig= q0_eig*r0_eig;
 
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -249,14 +258,14 @@ rate.sleep();
 
 //initialize rossumo forward in the y-axis direction
 
-t0_eig.row(0) <<1,0,0,0;
-t0_eig.row(1) <<0,1,0,0.5;
-t0_eig.row(2) <<0,0,1,0;
-t0_eig.row(3) <<0,0,0,1;
+t0_eig <<1,0,0,0
+         0,1,0,0.5
+         0,0,1,0
+         0,0,0,1;
 p1_eig= p0_eig*t0_eig;
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 while(n.ok()&& d !=0)
 
@@ -284,15 +293,15 @@ rate.sleep();
 
 //Inititalize rossumo to the negative x-axis of the vicon system
 
-r0_eig.row(0) <<1,0,0,0;
-r0_eig.row(1) <<0,1,0,0;
-r0_eig.row(2) <<0,0,1,PI/2;
-r0_eig.row(3) <<0,0,0,1;
+r0_eig  <<  1,0,0,0;
+            0,1,0,0;
+            0,0,1,PI/2;
+            0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d Eigen::MatrixXd::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -322,7 +331,7 @@ t0_eig.row(1) <<0,1,0,0;
 t0_eig.row(2) <<0,0,1,0;
 t0_eig.row(3) <<0,0,0,1;
 p1_eig= p0_eig*t0_eig;
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -349,15 +358,15 @@ rate.sleep();
 
 //Inititalize rossumo to the negative y-axis of the vicon system
 
-r0_eig.row(0) <<1,0,0,0;
-r0_eig.row(1) <<0,1,0,0;
-r0_eig.row(2) <<0,0,1,PI/2;
-r0_eig.row(3) <<0,0,0,1;
+r0_eig  <<  1,0,0,0
+            0,1,0,0
+            0,0,1,PI/2
+            0,0,0,1;
 q1_eig= q0_eig*r0_eig;
 
 
 
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -389,7 +398,7 @@ t0_eig.row(1) <<0,1,0,0;
 t0_eig.row(2) <<0,0,1,0;
 t0_eig.row(3) <<0,0,0,1;
 p1_eig= p0_eig*t0_eig;
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
@@ -421,7 +430,7 @@ r0_eig.row(1) <<0,1,0,0;
 r0_eig.row(2) <<0,0,1,PI/2;
 r0_eig.row(3) <<0,0,0,1;
 q1_eig= q0_eig*r0_eig;
-Eigen::AffineXd::Ones(4,1) d;
+Eigen::Affine3d::Ones(4,1) d;
 
 
 while(n.ok()&& d !=0)
