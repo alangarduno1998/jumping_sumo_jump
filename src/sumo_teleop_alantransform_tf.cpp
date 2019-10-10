@@ -114,24 +114,28 @@ int main(int argc, char **argv)
 	Eigen::Quaterniond d(1,1,1,1);
 	//im thinking the problem below is that eigen doesnt say how to subtract the two eigen datatypes 
 	//or maybe because one type is dynamic and the other is constant
-	d = q1_eig - q0_eig;
-	float norm;
- 	norm = d.norm();
-
-	while(n.ok()&& norm > 0)
-	{
-	q0_eig;
- 	//the problem arises here since the operator 
- 	//does not match with the dimensions of q1_eig and q0_eig.
-
+	Eigen::Matrix<double,4,1> q0_eig;
+	Eigen::Matrix<double,4,1> d1;
+	d1=d.toRotationMatrix();
+typedef Transform< double, 4, Affine > 	q0_eig,q1_eig,d1;
+d1 = q1_eig - q0_eig;
+//	float norm;
+// 	norm = d1.norm();
+//
+//	while(n.ok()&& norm > 0)
+//	{
+//	q0_eig;
+// 	//the problem arises here since the operator 
+// 	//does not match with the dimensions of q1_eig and q0_eig.
+//
 //	d = q1_eig-q0_eig;
-	norm;
-		v.linear.x = 0;
-		v.angular.z = 0.35;
-		rossumo_publisher.publish(v);
-		ros::spinOnce();
-		rate.sleep();
-	}
+//	norm;
+//		v.linear.x = 0;
+//		v.angular.z = 0.35;
+//		rossumo_publisher.publish(v);
+//		ros::spinOnce();
+//		rate.sleep();
+//	}
 //	//initialize rossumo forward in the x-axis direction
 //	Eigen::Matrix4d t0_eig;
 //	t0_eig << 1,0,0,0.5,
