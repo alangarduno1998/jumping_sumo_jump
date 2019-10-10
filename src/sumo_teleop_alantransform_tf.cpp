@@ -97,232 +97,197 @@ int main(int argc, char **argv)
 	ROS_INFO("Init");
 	ros::Rate rate(10);
 
-     //Inititalize rossumo to to match rossumo orientation to the x-axis of the vicon system
+	//Inititalize rossumo to to match rossumo orientation to the x-axis of the vicon system
 
-     Eigen::Matrix4d r0_eig;
-     r0_eig << 1,0,0,0,
-     	0,1,0,0,
-     	0,0,0,0,
-     	0,0,0,1;
+	Eigen::Matrix4d r0_eig;
+	r0_eig << 1,0,0,0,
+	       0,1,0,0,
+	       0,0,0,0,
+	       0,0,0,1;
 
-        Eigen::Affine3d q1_eig;
-	//here i had changed q0_eig*r0_eig; to q0_eig*r0_eig.matrix(). 
-	//dont know if eigen doesnt define this multiplication implicitly or it interferes with other 
-	//cases of the library.
+	Eigen::Affine3d d1;
+	d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+	float norm;
+	norm = d1.matrix().norm();
 
-        q1_eig= q0_eig*r0_eig.matrix();
-	Eigen::Quaterniond d(1,1,1,1);
-	//im thinking the problem below is that eigen doesnt say how to subtract the two eigen datatypes 
-	//or maybe because one type is dynamic and the other is constant
-	Eigen::Matrix<double,4,1> q0_eig;
-	Eigen::Matrix<double,4,1> d1;
-	d1=d.toRotationMatrix();
-typedef Transform< double, 4, Affine > 	q0_eig,q1_eig,d1;
-d1 = q1_eig - q0_eig;
-//	float norm;
-// 	norm = d1.norm();
-//
-//	while(n.ok()&& norm > 0)
-//	{
-//	q0_eig;
-// 	//the problem arises here since the operator 
-// 	//does not match with the dimensions of q1_eig and q0_eig.
-//
-//	d = q1_eig-q0_eig;
-//	norm;
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//	//initialize rossumo forward in the x-axis direction
-//	Eigen::Matrix4d t0_eig;
-//	t0_eig << 1,0,0,0.5,
-//		0,1,0,0,
-//		0,0,1,0,
-//		0,0,0,1;
-//	Eigen::Affine3d p1_eig;
-//	p1_eig= p0_eig*t0_eig;
-//
-//
-//	Eigen::Vector3d d(1,1,1);
-//
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d = p1_eig-p0_eig;
-//		v.linear.x = 0.3;
-//		v.angular.z = 0;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//	//Inititalize rossumo to the y-axis of the vicon system
-//
-//	r0_eig <<	1,0,0,0,
-//			0,1,0,0,
-//			0,0,1,PI/2,
-//			0,0,0,1;
-//
-//	q1_eig= q0_eig*r0_eig;
-//
-//
-//
-//	Eigen::Quaterniond d(1,1,1,1);
-//
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d = q1_eig-q0_eig;
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//
-//
-//	//initialize rossumo forward in the y-axis direction
-//
-//	t0_eig <<1,0,0,0,
-//		0,1,0,0.5,
-//		0,0,1,0,
-//		0,0,0,1;
-//
-//	p1_eig= p0_eig*t0_eig;
-//	Eigen::Vector3d d(1,1,1);
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d= p1_eig-p0_eig;
-//		v.linear.x= 0.3;
-//		v.angular.z =0;
-//		rossumo_publisher.publish(v);
-//		ROS_INFO("move forward2");
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//	//Inititalize rossumo to the negative x-axis of the vicon system
-//
-//	r0_eig  <<	1,0,0,0,
-//			0,1,0,0,
-//			0,0,1,PI/2,
-//			0,0,0,1;
-//
-//	q1_eig= q0_eig*r0_eig;
-//	Eigen::Quaterniond d(1,1,1,1);
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d = q1_eig-q0_eig;
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//
-//
-//	//initialize rossumo backward in the x-axis direction
-//
-//	t0_eig    <<	1,0,0,0,
-//			0,1,0,0,
-//			0,0,1,0,
-//			0,0,0,1;
-//
-//	p1_eig= p0_eig*t0_eig;
-//
-//	        Eigen::Vector3d d(1,1,1,1);
-//
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d= p1_eig-p0_eig;
-//		v.linear.x= 0.3;
-//		v.angular.z =0;
-//		rossumo_publisher.publish(v);
-//		ROS_INFO("move forward3");
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//	//Inititalize rossumo to the negative y-axis of the vicon system
-//
-//	r0_eig  <<  	1,0,0,0,
-//			0,1,0,0,
-//			0,0,1,PI/2,
-//			0,0,0,1;
-//
-//	q1_eig= q0_eig*r0_eig;
-//
-//	Eigen::Quaterniond d(1,1,1,1);
-//
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d = q1_eig-q0_eig;
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//	//initialize rossumo backward in the y-axis direction
-//
-//	t0_eig    <<  	1,0,0,-0.5,
-//			0,1,0,0,
-//			0,0,1,0,
-//			0,0,0,1;
-//
-//		p1_eig = p0_eig*t0_eig;
-//	        Eigen::Vector3d d(1,1,1);
-//
-//	while(n.ok()&& d !=0)
-//
-//	{
-//		d= p1_eig-p0_eig;
-//		v.linear.x = 0.3;
-//		v.angular.z = 0;
-//		rossumo_publisher.publish(v);
-//		ROS_INFO("move forward2");
-//		ros::spinOnce();
-//		rate.sleep();
-//
-//	}
-//
-//
-//
-//	//Inititalize rossumo to the x-axis of the vicon system
-//
-//	r0_eig    <<  	1,0,0,0,
-//			0,1,0,0,
-//			0,0,1,PI/2,
-//			0,0,0,1;
-//
-//	q1_eig = q0_eig*r0_eig;
-//
-//	Eigen::Quaterniond d(1,1,1,1);
-//	while(n.ok()&& d !=0)
-//	{
-//		d = q1_eig-q0_eig;
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
-//
-//
-//
-//	v.linear.x = 0;
-//	v.angular.z = 0;
-//	rossumo_publisher.publish(v);
-//	ros::spinOnce();
-//	return 0;
+	while(n.ok()&& norm > 0)
+	{
+		//the problem arises here since the operator 
+		//does not match with the dimensions of q1_eig and q0_eig.
+
+		d1.matrix() = q1_eig.matrix()-q0_eig.matrix();
+		norm = d1.matrix().norm();
+		v.linear.x = 0;
+		v.angular.z = 0.35;
+		rossumo_publisher.publish(v);
+		ros::spinOnce();
+		rate.sleep();
+	}
+
+	while(n.ok()&& norm !=0)
+
+	{
+		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+		norm = d1.matrix().norm();
+		v.linear.x = 0.3;
+		v.angular.z = 0;
+		rossumo_publisher.publish(v);
+		ros::spinOnce();
+		rate.sleep();
+	}
+
+
+	while(n.ok()&& norm !=0)
+	{
+		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+		norm = d1.matrix().norm();
+		v.linear.x = 0;
+		v.angular.z = 0.35;
+		rossumo_publisher.publish(v);
+		ros::spinOnce();
+		rate.sleep();
+	}
+
+
+	//
+	//	//initialize rossumo forward1 in the y-axis direction
+	//
+	//	t0_eig <<1,0,0,0,
+	//		0,1,0,0.5,
+	//		0,0,1,0,
+	//		0,0,0,1;
+	//
+	//	q1_eig= q0_eig*t0_eig;
+	//	Eigen::Vector3d1 d(1,1,1);
+	//	while(n.ok()&& d1 !=0)
+	//
+	//	{
+	//		d1= q1_eig-q0_eig;
+	//		v.linear.x= 0.3;
+	//		v.angular.z =0;
+	//		rossumo_publisher.publish(v);
+	//		ROS_INFO("move forward12");
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//	}
+	//	//Inititalize rossumo to the negative x-axis of the vicon system
+	//
+	//	r0_eig  <<	1,0,0,0,
+	//			0,1,0,0,
+	//			0,0,1,PI/2,
+	//			0,0,0,1;
+	//
+	//	q1_eig= q0_eig*r0_eig;
+	//	Eigen::Quaterniond1 d(1,1,1,1);
+	//	while(n.ok()&& d1 !=0)
+	//
+	//	{
+	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//	}
+	//
+	//
+	//
+	//	//initialize rossumo backward1 in the x-axis direction
+	//
+	//	t0_eig    <<	1,0,0,0,
+	//			0,1,0,0,
+	//			0,0,1,0,
+	//			0,0,0,1;
+	//
+	//	q1_eig= q0_eig*t0_eig;
+	//
+	//	        Eigen::Vector3d1 d(1,1,1,1);
+	//
+	//	while(n.ok()&& d1 !=0)
+	//
+	//	{
+	//		d1= q1_eig-q0_eig;
+	//		v.linear.x= 0.3;
+	//		v.angular.z =0;
+	//		rossumo_publisher.publish(v);
+	//		ROS_INFO("move forward13");
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//	}
+	//
+	//	//Inititalize rossumo to the negative y-axis of the vicon system
+	//
+	//	r0_eig  <<  	1,0,0,0,
+	//			0,1,0,0,
+	//			0,0,1,PI/2,
+	//			0,0,0,1;
+	//
+	//	q1_eig= q0_eig*r0_eig;
+	//
+	//	Eigen::Quaterniond1 d(1,1,1,1);
+	//
+	//	while(n.ok()&& d1 !=0)
+	//
+	//	{
+	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//	}
+	//
+	//	//initialize rossumo backward1 in the y-axis direction
+	//
+	//	t0_eig    <<  	1,0,0,-0.5,
+	//			0,1,0,0,
+	//			0,0,1,0,
+	//			0,0,0,1;
+	//
+	//		q1_eig = q0_eig*t0_eig;
+	//	        Eigen::Vector3d1 d(1,1,1);
+	//
+	//	while(n.ok()&& d1 !=0)
+	//
+	//	{
+	//		d1= q1_eig-q0_eig;
+	//		v.linear.x = 0.3;
+	//		v.angular.z = 0;
+	//		rossumo_publisher.publish(v);
+	//		ROS_INFO("move forward12");
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//
+	//	}
+	//
+	//
+	//
+	//	//Inititalize rossumo to the x-axis of the vicon system
+	//
+	//	r0_eig    <<  	1,0,0,0,
+	//			0,1,0,0,
+	//			0,0,1,PI/2,
+	//			0,0,0,1;
+	//
+	//	q1_eig = q0_eig*r0_eig;
+	//
+	//	Eigen::Quaterniond1 d(1,1,1,1);
+	//	while(n.ok()&& d1 !=0)
+	//	{
+	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
+	//		ros::spinOnce();
+	//		rate.sleep();
+	//	}
+	//
+	//
+	//
+	//	v.linear.x = 0;
+	//	v.angular.z = 0;
+	//	rossumo_publisher.publish(v);
+	//	ros::spinOnce();
+	//	return 0;
 }
 
