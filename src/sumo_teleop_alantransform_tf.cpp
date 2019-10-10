@@ -106,19 +106,23 @@ int main(int argc, char **argv)
      	0,0,0,1;
 
         Eigen::Affine3d q1_eig;
-        q1_eig= q0_eig*r0_eig;
+//here i had changed q0_eig*r0_eig; to q0_eig*r0_eig.matrix(). dont know if eigen doesnt define this multiplication implicitly or it interferes with other cases of the library.
+
+        q1_eig= q0_eig*r0_eig.matrix();
 	Eigen::Quaterniond d(1,1,1,1);
-//	 Eigen::QuaternionBase norm = d.norm();
-//	while(n.ok()&& norm !=0)
-//	
-//		d = q1_eig-q0_eig;
-//		norm = d.normalize();
-//		v.linear.x = 0;
-//		v.angular.z = 0.35;
-//		rossumo_publisher.publish(v);
-//		ros::spinOnce();
-//		rate.sleep();
-//	}
+	float norm;
+ 	norm = d.norm();
+
+	while(n.ok()&& norm > 0)
+	{
+//	q0_eig;
+	d = q1_eig-q0_eig;
+		v.linear.x = 0;
+		v.angular.z = 0.35;
+		rossumo_publisher.publish(v);
+		ros::spinOnce();
+		rate.sleep();
+	}
 //	//initialize rossumo forward in the x-axis direction
 //	Eigen::Matrix4d t0_eig;
 //	t0_eig << 1,0,0,0.5,
