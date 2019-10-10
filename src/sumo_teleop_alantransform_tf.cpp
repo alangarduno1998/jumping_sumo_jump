@@ -110,13 +110,16 @@ int main(int argc, char **argv)
 
         q1_eig= q0_eig*r0_eig.matrix();
 	Eigen::Quaterniond d(1,1,1,1);
+//im thinking the problem below is that eigen doesnt specifiy how to subtract the two eigen datatypes or maybe because one type is dynamic and the other is constant
+//	d = q1_eig - q0_eig;
 	float norm;
  	norm = d.norm();
 
 	while(n.ok()&& norm > 0)
 	{
 //	q0_eig;
-	d = q1_eig-q0_eig;
+//	d = q1_eig-q0_eig;
+	norm;
 		v.linear.x = 0;
 		v.angular.z = 0.35;
 		rossumo_publisher.publish(v);
