@@ -106,19 +106,23 @@ int main(int argc, char **argv)
      	0,0,0,1;
 
         Eigen::Affine3d q1_eig;
-//here i had changed q0_eig*r0_eig; to q0_eig*r0_eig.matrix(). dont know if eigen doesnt define this multiplication implicitly or it interferes with other cases of the library.
+	//here i had changed q0_eig*r0_eig; to q0_eig*r0_eig.matrix(). 
+	//dont know if eigen doesnt define this multiplication implicitly or it interferes with other 
+	//cases of the library.
 
         q1_eig= q0_eig*r0_eig.matrix();
 	Eigen::Quaterniond d(1,1,1,1);
-//im thinking the problem below is that eigen doesnt specifiy how to subtract the two eigen datatypes or maybe because one type is dynamic and the other is constant
-//	d = q1_eig - q0_eig;
+	//im thinking the problem below is that eigen doesnt say how to subtract the two eigen datatypes 
+	//or maybe because one type is dynamic and the other is constant
+	d = q1_eig - q0_eig;
 	float norm;
  	norm = d.norm();
 
 	while(n.ok()&& norm > 0)
 	{
-//	q0_eig;
-// 	//the problem arises here since the operator does not match with the dimensions of q1_eig and q0_eig
+	q0_eig;
+ 	//the problem arises here since the operator 
+ 	//does not match with the dimensions of q1_eig and q0_eig.
 
 //	d = q1_eig-q0_eig;
 	norm;
