@@ -118,6 +118,8 @@ int main(int argc, char **argv)
 	while(n.ok()&& norm > 0)
 	{
 //	q0_eig;
+// 	//the problem arises here since the operator does not match with the dimensions of q1_eig and q0_eig
+
 //	d = q1_eig-q0_eig;
 	norm;
 		v.linear.x = 0;
