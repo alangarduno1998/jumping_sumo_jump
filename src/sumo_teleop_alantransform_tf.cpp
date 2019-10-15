@@ -98,16 +98,21 @@ int main(int argc, char **argv)
 	ros::Rate rate(10);
 
 	//Inititalize rossumo to to match rossumo orientation to the x-axis of the vicon system
-
+//define rotation matrix as a matrix of 4 dimensions
 	Eigen::Matrix4d r0_eig;
 	r0_eig << 1,0,0,0,
 	       0,1,0,0,
 	       0,0,0,0,
 	       0,0,0,1;
-
+//d1 is affine data type 
 	Eigen::Affine3d d1;
+
+//transform affined3d datatype d1 to a matrix
+	q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
+//transform q1_eig and q0_eig into a matrix and then subtract the vectors 
 	float norm;
+//store the normalization of the d1 matrix into a floating number to later compare in the while loop
 	norm = d1.matrix().norm();
 
 	while(n.ok()&& norm > 0)
