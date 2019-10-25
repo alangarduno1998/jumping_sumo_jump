@@ -81,7 +81,7 @@ double GetAngleDifference(double from, double to)
 
 int main(int argc, char** argv)
 {
-	ros::init(argc,argv,"sumo_vicon");                                     //Initiates the node
+	ros::init(argc,argv,"sumo_teleop_alantransform_tfsimple");                                     //Initiates the node
 	ros::NodeHandle n;                                                      //Creates the node handler
 	ros::Subscriber joy_sub,sumo_sub;                                     //Creates the subscribers of the joystick and the vicon system
 	ros::Publisher cmd_vel_pub_sumo;                                       //Creates the publisher of the movement command
@@ -132,7 +132,7 @@ int main(int argc, char** argv)
 		//Stop
 		cmd_vel_sumo.linear.x= 0;
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo);
-		//where to go next?
+		//where to go next? (0,1)
 		dest_x = 0.0;
                 dest_y = 1.0;
 		double delta_x = 0;
@@ -157,9 +157,11 @@ int main(int argc, char** argv)
                 //where to go next?
                 dest_x = 0.0;
                 dest_y = 0.0;
+                delta_x = dest_x-sumo._posX;
+                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
-                angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));
+                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
+                angle = atan2((delta_y),(delta_x));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -175,10 +177,11 @@ int main(int argc, char** argv)
                 //where to go next?
                 dest_x = 1.0;
                 dest_y = 0.0;
-                double delta_x = dest_x-sumo._posX
+                delta_x = dest_x-sumo._posX;
+                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
-                angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));
+                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
+                angle = atan2((delta_y),(delta_x));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -192,12 +195,13 @@ int main(int argc, char** argv)
                 cmd_vel_sumo.linear.x= 0;
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
                 //where to go next?
-		 dest_x = 1.0;
+		dest_x = 1.0;
                 dest_y = 1.0;
-                double delta_x = dest_x-sumo._posX
+                delta_x = dest_x-sumo._posX;
+                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
-                angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));
+                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
+                angle = atan2((delta_y),(delta_x));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -215,3 +219,4 @@ int main(int argc, char** argv)
         }
 
 }
+
