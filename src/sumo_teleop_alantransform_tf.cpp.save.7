@@ -1,41 +1,21 @@
-//Coded by Alan Garduno
-#include <ros/ros.h>
-#include <geometry_msgs/Twist.h>
-#include <std_msgs/Empty.h>
-#include <sensor_msgs/Joy.h>
-#include <std_msgs/UInt8.h>
-#include <std_msgs/Float.h>
-#include <geometry_msgs/Point.h>
-
 #include <geometry_msgs/TransformStamped.h>
+#include <ros/ros.h>
 #include <tf/transform_datatypes.h>
+#include <stdlib.h>
+#include <iostream>
+#include <geometry_msgs/Twist.h>
 #include <eigen3/Eigen/Eigen>
 #include <eigen3/Eigen/Geometry>
 #include <eigen3/Eigen/Core>
-
-#include <stdlib.h>
-#include <iostream>
-#include <cmath>
-#include <math.h>
-
 #define PI 3.14159265358979323846
 using namespace Eigen;
 using namespace std;
 
-double heading;						//Drone's Heading/Orientation
-int btn_emergency;					//emergency button to stop operations
+ros::Subscriber vicon_subscriber;
+ros::Publisher rossumo_publisher;
+geometry_msgs::TransformStamped msg;
+geometry_msgs::Twist v;
 
-
-ros::Subscriber vicon_subscriber;			//declaring node is subscribed to the vicon motion capture system
-ros::Publisher rossumo_publisher;			//declaring node is publishing messages to the rossumo
-geometry_msgs::TransformStamped msg;			//Receiver message of the vicon
-geometry_msgs::Twist cmd_v;				//Command message of the rossumo
-
-double ce_hdg, ce_pos_X, ce_pos_Y, st_alt,st_hdg;
-std_msgs::Float64 st_pos_X,st_pos_Y,st_alt,st_hdg;
-std_msgs::FLoat64 stp_pos_X,stp_pos_Y,stp_alt,stp_hdg;
-
-struct v_object
 
 double v_x = 0;
 double v_y = 0;
@@ -46,7 +26,6 @@ double q_z = 0;
 double q_w = 0;
 double roll=0,pitch=0,yaw=0;
 int i,j,k;
-Eigen::Affine3d eig;
 Eigen::Quaterniond norm;
 Eigen::Affine3d q1_eig;
 Eigen::Affine3d q0_eig;
@@ -75,10 +54,9 @@ void transformTFToEigen(Eigen::Affine3d &eig, geometry_msgs::TransformStamped::C
 	Eigen::Vector3d pos(x,y,z);
 
 	Eigen::Matrix3d Re(q);
+
 	eig.translation() = pos;
 	eig.linear() = Re;
-std::cout<<eig.translation()<<std::endl;
-std::cout<<eig.linear()<<std::endl;
 	return;
 }
 
@@ -126,13 +104,10 @@ int main(int argc, char **argv)
 	       0,1,0,0,
 	       0,0,0,0,
 	       0,0,0,1;
-	Eigen::Matrix4d q0_eig;
-	q0_eig= eig.linear();
+	q1_eig= q
 //d1 is affine data type 
 	Eigen::Affine3d d1;
-
 //transform affined3d datatype d1 to a matrix
-q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
 //transform q1_eig and q0_eig into a matrix and then subtract the vectors 
 	float norm;
@@ -146,9 +121,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 
 		d1.matrix() = q1_eig.matrix()-q0_eig.matrix();
 		norm = d1.matrix().norm();
-		cmd_v.linear.x = 0;
-		cmd_v.angular.z = 0.35;
-		rossumo_publisher.publish(cmd_v);
+		v.linear.x = 0;
+		v.angular.z = 0.35;
+		rossumo_publisher.publish(v);
 		ros::spinOnce();
 		rate.sleep();
 	}
@@ -158,9 +133,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	{
 		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
 		norm = d1.matrix().norm();
-		cmd_v.linear.x = 0.3;
-		cmd_v.angular.z = 0;
-		rossumo_publisher.publish(cmd_v);
+		v.linear.x = 0.3;
+		v.angular.z = 0;
+		rossumo_publisher.publish(v);
 		ros::spinOnce();
 		rate.sleep();
 	}
@@ -170,9 +145,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	{
 		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
 		norm = d1.matrix().norm();
-		cmd_v.linear.x = 0;
-		cmd_v.angular.z = 0.35;
-		rossumo_publisher.publish(cmd_v);
+		v.linear.x = 0;
+		v.angular.z = 0.35;
+		rossumo_publisher.publish(v);
 		ros::spinOnce();
 		rate.sleep();
 	}
@@ -192,9 +167,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//
 	//	{
 	//		d1= q1_eig-q0_eig;
-	//		cmd_v.linear.x= 0.3;
-	//		cmd_v.angular.z =0;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x= 0.3;
+	//		v.angular.z =0;
+	//		rossumo_publisher.publish(v);
 	//		ROS_INFO("move forward12");
 	//		ros::spinOnce();
 	//		rate.sleep();
@@ -212,9 +187,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//
 	//	{
 	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
-	//		cmd_v.linear.x = 0;
-	//		cmd_v.angular.z = 0.35;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
 	//		ros::spinOnce();
 	//		rate.sleep();
 	//	}
@@ -236,9 +211,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//
 	//	{
 	//		d1= q1_eig-q0_eig;
-	//		cmd_v.linear.x= 0.3;
-	//		cmd_v.angular.z =0;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x= 0.3;
+	//		v.angular.z =0;
+	//		rossumo_publisher.publish(v);
 	//		ROS_INFO("move forward13");
 	//		ros::spinOnce();
 	//		rate.sleep();
@@ -259,9 +234,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//
 	//	{
 	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
-	//		cmd_v.linear.x = 0;
-	//		cmd_v.angular.z = 0.35;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
 	//		ros::spinOnce();
 	//		rate.sleep();
 	//	}
@@ -280,9 +255,9 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//
 	//	{
 	//		d1= q1_eig-q0_eig;
-	//		cmd_v.linear.x = 0.3;
-	//		cmd_v.angular.z = 0;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x = 0.3;
+	//		v.angular.z = 0;
+	//		rossumo_publisher.publish(v);
 	//		ROS_INFO("move forward12");
 	//		ros::spinOnce();
 	//		rate.sleep();
@@ -304,18 +279,18 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 	//	while(n.ok()&& d1 !=0)
 	//	{
 	//		d1.matrix() = q1_eig.matrix() - q0_eig.matrix();
-	//		cmd_v.linear.x = 0;
-	//		cmd_v.angular.z = 0.35;
-	//		rossumo_publisher.publish(cmd_v);
+	//		v.linear.x = 0;
+	//		v.angular.z = 0.35;
+	//		rossumo_publisher.publish(v);
 	//		ros::spinOnce();
 	//		rate.sleep();
 	//	}
 	//
 	//
 	//
-	//	cmd_v.linear.x = 0;
-	//	cmd_v.angular.z = 0;
-	//	rossumo_publisher.publish(cmd_v);
+	//	v.linear.x = 0;
+	//	v.angular.z = 0;
+	//	rossumo_publisher.publish(v);
 	//	ros::spinOnce();
 	//	return 0;
 }

@@ -1,4 +1,4 @@
-//Coded by Alexis Guijarro & Alan Garduno
+//Coded by Alexis Guijarro
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Empty.h>
@@ -111,17 +111,18 @@ int main(int argc, char** argv)
 			cmd_vel_pub_sumo.publish(cmd_vel_sumo);
 			break;
 		}
-		//where to go? 
-		double dest_x = 1.0; //global position coordinates in x 
+		//where to go?
+		double dest_x = 1.0; //global position coordinates in x
 		double dest_y = 1.0; // global position coordinates in y
 		//Find angle and distance
-		double distance = 0; 
+		double distance = 0;
 		double angle = 0;
 		distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2)); //find distance to global position relative to sumo posiition to calculate the desired angle for a rotation
 		angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));
 		//face waypoint
 		cmd_vel_sumo.angular.z = (angle-heading);// store the change in rotation inside the rossumo to be intialized 
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo); //must set conditional statement so that the rossumo knows when it has achived its desired angle
+		ros::spinOnce();
 		//Stop
 		cmd_vel_sumo.angular.z = 0;
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -135,13 +136,9 @@ int main(int argc, char** argv)
 		//where to go next? (0,1)
 		dest_x = 0.0;
                 dest_y = 1.0;
-		double delta_x = 0;
-		double delta_y = 0;
-		delta_x = dest_x-sumo._posX;
-		delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
-                angle = atan2((delta_y),(delta_x));
+                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
+                angle = atan2((dest_y-sumo._posY),(dest_x-sumo._posX));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -157,11 +154,9 @@ int main(int argc, char** argv)
                 //where to go next?
                 dest_x = 0.0;
                 dest_y = 0.0;
-                delta_x = dest_x-sumo._posX;
-                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
-                angle = atan2((delta_y),(delta_x));
+                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
+                angle = atan2((dest_y-sumo._posY),(dest_x-sumo._posX));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -177,11 +172,9 @@ int main(int argc, char** argv)
                 //where to go next?
                 dest_x = 1.0;
                 dest_y = 0.0;
-                delta_x = dest_x-sumo._posX;
-                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
-                angle = atan2((delta_y),(delta_x));
+                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(delta_y,2));
+                angle = atan2((delta_y),(dest_x-sumo._posX));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -197,11 +190,9 @@ int main(int argc, char** argv)
                 //where to go next?
 		dest_x = 1.0;
                 dest_y = 1.0;
-                delta_x = dest_x-sumo._posX;
-                delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
-                angle = atan2((delta_y),(delta_x));
+                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
+                angle = atan2((delta_y),(dest_x-sumo._posX));
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
@@ -214,9 +205,6 @@ int main(int argc, char** argv)
                 //Stop
                 cmd_vel_sumo.linear.x= 0;
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);
-
-
         }
 
 }
-

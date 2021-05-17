@@ -1,4 +1,4 @@
-//Coded by Alexis Guijarro & Alan Garduno
+//Coded by Alexis Guijarro
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Empty.h>
@@ -111,11 +111,11 @@ int main(int argc, char** argv)
 			cmd_vel_pub_sumo.publish(cmd_vel_sumo);
 			break;
 		}
-		//where to go? 
-		double dest_x = 1.0; //global position coordinates in x 
+		//where to go?
+		double dest_x = 1.0; //global position coordinates in x
 		double dest_y = 1.0; // global position coordinates in y
 		//Find angle and distance
-		double distance = 0; 
+		double distance = 0;
 		double angle = 0;
 		distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2)); //find distance to global position relative to sumo posiition to calculate the desired angle for a rotation
 		angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));

@@ -136,7 +136,7 @@ include_directories(
  add_executable(${PROJECT_NAME}_nodesquare src/sumo_teleop_alansquare.cpp)
  add_executable(${PROJECT_NAME}_nodemove src/sumo_teleop_alanmove.cpp)
  add_executable(${PROJECT_NAME}_nodetransform src/sumo_teleop_alantransform.cpp)
- add_executable(${PROJECT_NAME}_nodetf src/sumo_teleop_alantransform_tf.cpp)
+ add_executable(${PROJECT_NAME}_nodetfsimple src/sumo_teleop_alantransform_tfsimple.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -149,7 +149,7 @@ include_directories(
  add_dependencies(${PROJECT_NAME}_nodesquare ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  add_dependencies(${PROJECT_NAME}_nodemove ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  add_dependencies(${PROJECT_NAME}_nodetransform ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
- add_dependencies(${PROJECT_NAME}_nodetf ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(${PROJECT_NAME}_nodetfsimple ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(${PROJECT_NAME}_nodejoy
@@ -164,7 +164,7 @@ include_directories(
  target_link_libraries(${PROJECT_NAME}_nodetransform
    ${catkin_LIBRARIES}
 )
- target_link_libraries(${PROJECT_NAME}_nodetf
+ target_link_libraries(${PROJECT_NAME}_nodetfsimple
    ${catkin_LIBRARIES}
 )
 #############

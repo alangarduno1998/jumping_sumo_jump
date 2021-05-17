@@ -139,7 +139,7 @@ q1_eig.matrix() = r0_eig*q0_eig.matrix();
 //store the normalization of the d1 matrix into a floating number to later compare in the while loop
 	norm = d1.matrix().norm();
 
-	while(n.ok()&& norm > 0)
+	while(n.ok())
 	{
 		//the problem arises here since the operator 
 		//does not match with the dimensions of q1_eig and q0_eig.

@@ -1,4 +1,4 @@
-//Coded by Alexis Guijarro & Alan Garduno
+//Coded by Alexis Guijarro
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Empty.h>
@@ -117,16 +117,35 @@ int main(int argc, char** argv)
 		//Find angle and distance
 		double distance = 0; 
 		double angle = 0;
+		double delta_x = 0;
+		double delta_y = 0;
+		delta_x = dest_x - sumo._posX// this what we will be comparing to the feedback from the 
 		distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2)); //find distance to global position relative to sumo posiition to calculate the desired angle for a rotation
 		angle = atan2((dest_y - sumo._posY),(dest_x - sumo._posX));
 		//face waypoint
-		cmd_vel_sumo.angular.z = (angle-heading);// store the change in rotation inside the rossumo to be intialized 
+
+		cmd_vel_sumo.angular.z = (angle-heading);// store the change in rotation inside the rossumo to be intialized
+		// heading hasnt been clearly defined in the code given by mentor, so im not sure how its role is applicable in this segment. how will the jumping sumo know to stop once rotation is complete?
+		/*plan on inserting this while loop to give feedback if the above line isnt functional or the heading hasnt been defined. 
+			while(n.ok() && angle >= heading)
+			{
+			v.linear.x=0;
+			v.angular.z =0.20;
+			velocity_publisher.publish(v);
+			ROS_INFO("%lf",sumo._posX());
+			ROS_INFO("rotate right1");
+			ros::spinOnce();
+			rate.sleep();
+			ros::Time current = ros::Time::now();
+			d = current - start;
+			}
+		*/
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo); //must set conditional statement so that the rossumo knows when it has achived its desired angle
 		//Stop
 		cmd_vel_sumo.angular.z = 0;
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo);
 		//Move to target
-		cmd_vel_sumo.linear.x = distance;
+		cmd_vel_sumo.linear.x = distance- sumo._posX;
 		cmd_vel_pub_sumo.publish(cmd_vel_sumo);
 		//Coded by Alan Garduno
 		//Stop

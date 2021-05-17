@@ -1,4 +1,4 @@
-//Coded by Alexis Guijarro & Alan Garduno
+//Coded by Alexis Guijarro
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <std_msgs/Empty.h>
@@ -135,13 +135,17 @@ int main(int argc, char** argv)
 		//where to go next? (0,1)
 		dest_x = 0.0;
                 dest_y = 1.0;
-		double delta_x = 0;
-		double delta_y = 0;
-		delta_x = dest_x-sumo._posX;
 		delta_y = dest_y-sumo._posY;
                 //Find angle and distance
-                distance = sqrt(pow(delta_x,2)+pow(delta_y,2));
-                angle = atan2((delta_y),(delta_x));
+                distance = sqrt(pow(dest_x-sumo._posX,2)+pow(dest_y-sumo._posY,2));
+                angle = atan2((dest_x-sumo._posX),(dest_y-sumo._posY));
+		start= ros::Time::now();
+		d= ros::Duration(0);
+
+		while(n.ok() && d.toSec() <=2)
+		{
+		v.linear.x=0;
+		v.angular.z = 
                 //face waypoint
                 cmd_vel_sumo.angular.z = (angle-heading);
                 cmd_vel_pub_sumo.publish(cmd_vel_sumo);

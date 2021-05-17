@@ -52,6 +52,12 @@ void subscribecall(const geometry_msgs::TransformStamped::ConstPtr& msg)
         do_math(q_x,q_y,q_z,q_w);
         ROS_INFO("v=[%lf %lf %lf] q=[%lf %lf %lf %lf] RPY= [%lf %lf %lf]", v_x, v_y, v_z, q_x, q_y, q_z, q_w);
 }
+void initial(double q0
+
+
+
+
+
 
 int main(int argc, char **argv)
 
